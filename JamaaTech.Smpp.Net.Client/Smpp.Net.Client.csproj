@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\JamaaTech.Smpp.Net.Lib\Smpp.Net.Lib.csproj">
+    <ProjectReference Include="..\JamaaTech.SMPP.Net.Lib\Smpp.Net.Lib.csproj">
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
       <IncludeAssets>Smpp.Net.Lib.dll</IncludeAssets>
     </ProjectReference>
