@@ -40,6 +40,7 @@ namespace JamaaTech.Smpp.Net.Client
         private object vSyncRoot;
         private string vSourceAddress;
         private bool? vUseSeparateConnections;
+        private bool vDisableReceive;
         #endregion
 
         #region Constructors
@@ -58,6 +59,7 @@ namespace JamaaTech.Smpp.Net.Client
             vDefaultServiceType = "";
             SmscID = "";
             vSyncRoot = new object();
+            vDisableReceive = false;
         }
         #endregion
 
@@ -175,6 +177,17 @@ namespace JamaaTech.Smpp.Net.Client
         }
 
         /// <summary>
+        /// Gets or sets DisableReceive, in succession AllowReceive (<see cref="SessionBindInfo.AllowReceive"/>)
+        /// When true: Sets OpenSession (<see cref="SmppClient.OpenSession"/>) creates only one session to transmit. Separate connections will be forced <see cref="CanSeparateConnections"/>)
+        /// When false: OpenSession (<see cref="SmppClient.OpenSession"/>) creates one or two sessions (depends on  <see cref="CanSeparateConnections"/> to transmit and receive.
+        /// </summary>
+        public bool DisableReceive
+        {
+            get { return vDisableReceive; }
+            set { vDisableReceive = value; }
+        }
+
+        /// <summary>
         /// Gets or sets UseSeparateConnections
         /// When null: Depends on <see cref="InterfaceVersion"/>, if <see cref="InterfaceVersion.v33"/> true, <see cref="InterfaceVersion.v34"/> false.
         /// When true: Use two sessions for Receiver (<see cref="CommandType.BindReceiver"/>) and Transmitter (<see cref="CommandType.BindTransmitter"/>)
@@ -189,7 +202,7 @@ namespace JamaaTech.Smpp.Net.Client
         /// <summary>
         /// <see cref="UseSeparateConnections"/>
         /// </summary>
-        public bool CanSeparateConnections => UseSeparateConnections == true || InterfaceVersion == InterfaceVersion.v33;
+        public bool CanSeparateConnections => UseSeparateConnections == true || InterfaceVersion == InterfaceVersion.v33 || DisableReceive;
         #endregion
 
         #region Methods
@@ -204,6 +217,7 @@ namespace JamaaTech.Smpp.Net.Client
             bindInfo.AddressTon = vAddressTon;
             bindInfo.AddressNpi = vAddressNpi;
             bindInfo.SystemType = vSystemType;
+            if (vDisableReceive) { bindInfo.AllowReceive = false; }
             return bindInfo;
         }
         #endregion

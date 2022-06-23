@@ -386,19 +386,21 @@ namespace JamaaTech.Smpp.Net.Client
             if (useSeparateConnections)
             {
                 //Create two separate sessions for sending and receiving
-                try
-                {
-                    bindInfo.AllowReceive = true;
-                    bindInfo.AllowTransmit = false;
-                    vRecv = SmppClientSession.Bind(bindInfo, timeOut, vSmppEncodingService);
-                    InitializeSession(vRecv);
-                }
-                catch
-                {
-                    ChangeState(SmppConnectionState.Closed);
-                    //Start reconnect timer
-                    StartTimer();
-                    throw;
+                //Create two separate sessions for sending and receiving
+                if (bindInfo.AllowReceive) {
+                    try
+                    {
+                        bindInfo.AllowTransmit = false;
+                        vRecv = SmppClientSession.Bind(bindInfo, timeOut, vSmppEncodingService);
+                        InitializeSession(vRecv);
+                    }
+                    catch
+                    {
+                        ChangeState(SmppConnectionState.Closed);
+                        //Start reconnect timer
+                        StartTimer();
+                        throw;
+                    }
                 }
                 //--
                 try
